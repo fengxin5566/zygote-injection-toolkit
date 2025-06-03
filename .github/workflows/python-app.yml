@@ -1,0 +1,39 @@
+#这个工作流将安装Python依赖项，使用单一版本的Python运行测试和lint
+#更多信息请参见：https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+名字: Python应用
+
+在:
+推:
+分支: [ "main" ]
+query为空pull_request:
+分支: [ "main" ]
+
+权限:
+内容: 阅读
+
+工作:
+建筑:
+
+    runs-on: ubuntu-latest
+
+步骤:
+    - 用途: actions/checkout@v4
+    - 名字: 设置Python 3.10
+用途: actions/setup-python@v3
+与:
+        python-version: "3.10"
+    - 名字: 安装依赖项
+跑: |
+python-m pip install-升级pip
+安装flake8 pytest
+if[-f requirements. txt]；然后pip install-r requirements. txt；fi
+    - 名字: 薄片皮棉
+跑: |
+#如果存在Python语法错误或未定义的名称，则停止构建
+flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+#exit-zero将所有错误视为警告。GitHub编辑器的字符宽度为127
+flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with pytest
+      run: |
+        pytest
